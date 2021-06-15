@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"regexp"
 	"sort"
 	"sync"
@@ -34,14 +33,12 @@ func (m *CIDRMap) Insert(machineSetName, s string) {
 	defer m.mutex.Unlock()
 
 	m.entries[machineSetName] = cidrs
-	fmt.Printf("%v\n", m.entries)
 }
 
 func (m *CIDRMap) Delete(machineSetName string) {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 	delete(m.entries, machineSetName)
-	fmt.Printf("%v\n", m.entries)
 }
 
 func (m *CIDRMap) Exists(machineSetName string) bool {
