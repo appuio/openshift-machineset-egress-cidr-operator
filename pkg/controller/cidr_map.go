@@ -9,7 +9,7 @@ import (
 	v1 "github.com/openshift/api/network/v1"
 )
 
-type CidrMap struct {
+type CIDRMap struct {
 	entries map[string][]v1.HostSubnetEgressCIDR
 	mutex   *sync.RWMutex
 }
@@ -18,8 +18,8 @@ var (
 	splitRe = regexp.MustCompile(", *")
 )
 
-func NewCidrMap() *CidrMap {
-	return &CidrMap{
+func NewCIDRMap() *CIDRMap {
+	return &CIDRMap{
 		entries: make(map[string][]v1.HostSubnetEgressCIDR),
 		mutex:   new(sync.RWMutex),
 	}
@@ -27,7 +27,7 @@ func NewCidrMap() *CidrMap {
 
 // Insert takes a list of (comma separated) values, splits and sorts them, and
 // then inserts them into the cache.
-func (m *CidrMap) Insert(machineSetName, s string) {
+func (m *CIDRMap) Insert(machineSetName, s string) {
 	cidrs := splitCIDRs(s)
 
 	m.mutex.Lock()
@@ -37,20 +37,20 @@ func (m *CidrMap) Insert(machineSetName, s string) {
 	fmt.Printf("%v\n", m.entries)
 }
 
-func (m *CidrMap) Delete(machineSetName string) {
+func (m *CIDRMap) Delete(machineSetName string) {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 	delete(m.entries, machineSetName)
 	fmt.Printf("%v\n", m.entries)
 }
 
-func (m *CidrMap) Exists(machineSetName string) bool {
+func (m *CIDRMap) Exists(machineSetName string) bool {
 	m.mutex.RLock()
 	defer m.mutex.RUnlock()
 	return len(m.entries[machineSetName]) > 0
 }
 
-func (m *CidrMap) Get(machineSetName string) []v1.HostSubnetEgressCIDR {
+func (m *CIDRMap) Get(machineSetName string) []v1.HostSubnetEgressCIDR {
 	m.mutex.RLock()
 	defer m.mutex.RUnlock()
 	return m.entries[machineSetName]
@@ -58,7 +58,7 @@ func (m *CidrMap) Get(machineSetName string) []v1.HostSubnetEgressCIDR {
 
 // Equals returns true if the splitted, sorted value of v is equal to the entry
 // in the cache for `machineSetName`.
-func (m *CidrMap) Equals(machineSetName, v string) bool {
+func (m *CIDRMap) Equals(machineSetName, v string) bool {
 	other := splitCIDRs(v)
 
 	m.mutex.RLock()
@@ -68,7 +68,7 @@ func (m *CidrMap) Equals(machineSetName, v string) bool {
 	return compare(this, other)
 }
 
-func (m *CidrMap) EqualCIRDs(machineSetName string, other []v1.HostSubnetEgressCIDR) bool {
+func (m *CIDRMap) EqualCIRDs(machineSetName string, other []v1.HostSubnetEgressCIDR) bool {
 	s := egressCIDRsToStrings(other)
 	sort.Strings(s)
 	other = stringsToEgressCIDRs(s)

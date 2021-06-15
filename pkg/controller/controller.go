@@ -21,7 +21,7 @@ const (
 )
 
 type Controller struct {
-	cidrs *CidrMap
+	cidrs *CIDRMap
 
 	machineInformerFactory machine.SharedInformerFactory
 	networkInformerFactory network.SharedInformerFactory
@@ -40,7 +40,7 @@ type Controller struct {
 
 func New(config *rest.Config) *Controller {
 	c := &Controller{
-		cidrs:  NewCidrMap(),
+		cidrs:  NewCIDRMap(),
 		config: config,
 	}
 
