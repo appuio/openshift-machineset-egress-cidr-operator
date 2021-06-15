@@ -14,7 +14,7 @@ type CIDRMap struct {
 }
 
 var (
-	splitRe = regexp.MustCompile(", *")
+	splitRe = regexp.MustCompile(`,\s*`)
 )
 
 func NewCIDRMap() *CIDRMap {
@@ -78,6 +78,12 @@ func (m *CIDRMap) EqualCIRDs(machineSetName string, other []v1.HostSubnetEgressC
 }
 
 func splitCIDRs(s string) []v1.HostSubnetEgressCIDR {
+	// edge case: When splitting "", Split will return a slice with a single
+	// empty string, whereas we want a slice of length 0.
+	if s == "" {
+		return make([]v1.HostSubnetEgressCIDR, 0)
+	}
+
 	v := splitRe.Split(s, -1)
 	sort.Strings(v)
 	return stringsToEgressCIDRs(v)

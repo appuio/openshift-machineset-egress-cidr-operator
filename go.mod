@@ -3,6 +3,7 @@ module github.com/appuio/openshift-machineset-egress-cidr-operator
 go 1.16
 
 require (
+	github.com/matryer/is v1.4.0
 	github.com/openshift/api v0.0.0-20210428205234-a8389931bee7
 	github.com/openshift/client-go v0.0.0-20210112165513-ebc401615f47
 	github.com/openshift/machine-api-operator v0.2.1-0.20210521181620-e179bb5ce397
