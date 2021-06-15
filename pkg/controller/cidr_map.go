@@ -24,9 +24,9 @@ func NewCIDRMap() *CIDRMap {
 	}
 }
 
-// Insert takes a list of (comma separated) values, splits and sorts them, and
-// then inserts them into the cache.
-func (m *CIDRMap) Insert(machineSetName, s string) {
+// Set takes a list of (comma separated) values, splits and sorts them, and
+// then inserts them into the cache for `machineSetName`.
+func (m *CIDRMap) Set(machineSetName, s string) {
 	cidrs := splitCIDRs(s)
 
 	m.mutex.Lock()

@@ -55,7 +55,7 @@ func (c *Controller) AddMachineSet(ms *v1beta1.MachineSet) {
 		return
 	}
 
-	c.cidrs.Insert(ms.Name, cidrs)
+	c.cidrs.Set(ms.Name, cidrs)
 }
 
 func (c *Controller) UpdateMachineSet(_, ms *v1beta1.MachineSet) {
@@ -67,7 +67,7 @@ func (c *Controller) UpdateMachineSet(_, ms *v1beta1.MachineSet) {
 	}
 
 	if !c.cidrs.Equals(ms.Name, cidrs) {
-		c.cidrs.Insert(ms.Name, cidrs)
+		c.cidrs.Set(ms.Name, cidrs)
 		return
 	}
 }
