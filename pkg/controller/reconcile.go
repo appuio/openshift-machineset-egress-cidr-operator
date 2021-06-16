@@ -25,8 +25,8 @@ func ReconcileSubnet(
 		return "error getMachine: " + err.Error()
 	}
 
-	machineset, ok := machine.Labels[MachinesetLabel]
-	if !ok {
+	machineset := machine.Labels[MachinesetLabel]
+	if machineset == "" {
 		klog.Errorf("HostSubnet<%s>: no '%s' label on machine", hs.Name, MachinesetLabel)
 		return "error: no machineset label"
 	}
