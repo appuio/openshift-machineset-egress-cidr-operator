@@ -1,0 +1,60 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: operator
+  namespace: appuio-machineset-egress-cidr-operator
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: machineset-egress-cidr-operator
+rules:
+  - apiGroups:
+      - machine.openshift.io
+    resources:
+      - machinesets
+      - machines
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - network.openshift.io
+    resources:
+      - hostsubnets
+    verbs:
+      - get
+      - list
+      - watch
+      - update
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: machineset-egress-cidr-operators
+  namespace: openshift-machine-api
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: machineset-egress-cidr-operator
+subjects:
+  - kind: ServiceAccount
+    name: operator
+    namespace: appuio-machineset-egress-cidr-operator
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: machineset-egress-cidr-operators
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: machineset-egress-cidr-operator
+subjects:
+  - kind: ServiceAccount
+    name: operator
+    namespace: appuio-machineset-egress-cidr-operator
