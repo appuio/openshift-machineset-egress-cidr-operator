@@ -18,6 +18,7 @@ const (
 	LeaseLockName         = "machineset-egress-cidr-operator.appuio.ch"
 	MachineNamespace      = "openshift-machine-api"
 	MachinesetLabel       = "machine.openshift.io/cluster-api-machineset"
+	RoleLabel             = "machine.openshift.io/cluster-api-machine-role"
 )
 
 type Controller struct {

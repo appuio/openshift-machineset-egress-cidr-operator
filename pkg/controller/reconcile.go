@@ -25,6 +25,11 @@ func ReconcileSubnet(
 		return "error getMachine: " + err.Error()
 	}
 
+	if machine.Labels[RoleLabel] == "master" {
+		klog.V(8).Infof("HostSubnet<%s>: role==master; ignore", hs.Name)
+		return "ignore master"
+	}
+
 	machineset := machine.Labels[MachinesetLabel]
 	if machineset == "" {
 		klog.Errorf("HostSubnet<%s>: no '%s' label on machine", hs.Name, MachinesetLabel)

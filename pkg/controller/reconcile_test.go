@@ -135,6 +135,23 @@ func TestReconcileErrUpdateHostsubnet(t *testing.T) {
 	is.Equal(updateHostSubnetCalled, 1)
 }
 
+func TestReconcileIgnoreMaster(t *testing.T) {
+	is := is.New(t)
+	hs := mockHostSubnet("master-asdf")
+	counter := 0
+
+	getMachine := func(name string) (*v1beta1.Machine, error) {
+		m := new(v1beta1.Machine)
+		m.SetLabels(map[string]string{
+			controller.RoleLabel: "master",
+		})
+		return m, nil
+	}
+
+	is.Equal(controller.ReconcileSubnet(hs, nil, getMachine, nil), "ignore master")
+	is.Equal(counter, 0) // getMachine called exactly once
+}
+
 func mockHostSubnet(name string) *v1.HostSubnet {
 	hs := v1.HostSubnet{}
 	hs.SetName(name)
