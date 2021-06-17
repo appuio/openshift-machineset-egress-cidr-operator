@@ -10,6 +10,14 @@ Annotate your MachineSet with a comma-separated list of CIDRs you want to have o
 
 This will OVERRIDE the `egressCIDRs` field for all HostSubnets belonging to the Machineset.
 
+
+## Deployment
+
+When running the operator in-cluster, it will autodiscover the service account. When running out of cluster, make sure to set the `KUBECONFIG` env var.
+
+You can configure logging verbosity by using the `-v` flag, however note that this will be applied to the whole K8s client library. To only get relevant stuff, uset `-vmodule=reconcile=8`.
+
+
 ## Development
 
 Apply all the manifests in `manifests/` to your test cluster:

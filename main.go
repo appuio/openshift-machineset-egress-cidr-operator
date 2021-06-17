@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"os"
 	"os/signal"
 	"syscall"
@@ -12,7 +13,8 @@ import (
 )
 
 func main() {
-	klog.InitFlags(nil)
+	klog.InitFlags(flag.CommandLine)
+	flag.Parse()
 	klog.Info("Starting up...")
 
 	config := newConfig()
