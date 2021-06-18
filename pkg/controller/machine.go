@@ -6,6 +6,7 @@ import (
 	"github.com/openshift/machine-api-operator/pkg/apis/machine/v1beta1"
 	"github.com/openshift/machine-api-operator/pkg/generated/clientset/versioned"
 	"github.com/openshift/machine-api-operator/pkg/generated/informers/externalversions"
+	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/client-go/tools/cache"
 	"k8s.io/klog/v2"
 )
@@ -56,6 +57,7 @@ func (c *Controller) AddMachineSet(ms *v1beta1.MachineSet) {
 	}
 
 	c.cidrs.Set(ms.Name, cidrs)
+	c.triggerReconcile(ms.Name)
 }
 
 func (c *Controller) UpdateMachineSet(_, ms *v1beta1.MachineSet) {
@@ -68,10 +70,36 @@ func (c *Controller) UpdateMachineSet(_, ms *v1beta1.MachineSet) {
 
 	if !c.cidrs.Equals(ms.Name, cidrs) {
 		c.cidrs.Set(ms.Name, cidrs)
-		return
+		c.triggerReconcile(ms.Name)
 	}
 }
 
 func (c *Controller) DeleteMachineSet(ms *v1beta1.MachineSet) {
 	c.cidrs.Delete(ms.Name)
+}
+
+// triggerReconcile will list all machines in the given Machineset and trigger a
+// reconcilation for each HostSubnet in it.
+func (c *Controller) triggerReconcile(machineset string) {
+	selector, err := labels.Parse(MachinesetLabel + "=" + machineset)
+	if err != nil {
+		klog.Error("creating label selector:", err)
+		return
+	}
+
+	machines, err := c.machines.List(selector)
+	if err != nil {
+		klog.Error("list machines:", err)
+		return
+	}
+
+	for _, m := range machines {
+		hs, err := c.hostSubnets.Get(m.Name)
+		if err != nil {
+			klog.Error("get hostsubnet", err)
+			return
+		}
+
+		ReconcileSubnet(hs, c.cidrs, c.machines.Get, c.hostSubnetClient.Update)
+	}
 }
