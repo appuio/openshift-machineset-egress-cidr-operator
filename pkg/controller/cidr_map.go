@@ -50,7 +50,13 @@ func (m *CIDRMap) Exists(machineSetName string) bool {
 func (m *CIDRMap) Get(machineSetName string) []v1.HostSubnetEgressCIDR {
 	m.mutex.RLock()
 	defer m.mutex.RUnlock()
-	return m.entries[machineSetName]
+	entries := m.entries[machineSetName]
+
+	if len(entries) == 1 && entries[0] == "none" {
+		return []v1.HostSubnetEgressCIDR{}
+	}
+
+	return entries
 }
 
 // Equals returns true if the splitted, sorted value of v is equal to the entry
@@ -73,6 +79,10 @@ func (m *CIDRMap) EqualCIRDs(machineSetName string, other []v1.HostSubnetEgressC
 	m.mutex.RLock()
 	defer m.mutex.RUnlock()
 	this := m.entries[machineSetName]
+
+	if len(this) == 1 && this[0] == "none" {
+		return len(other) == 0
+	}
 
 	return compare(this, other)
 }

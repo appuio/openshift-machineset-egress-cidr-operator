@@ -10,6 +10,10 @@ Annotate your MachineSet with a comma-separated list of CIDRs you want to have o
 
 This will OVERRIDE the `egressCIDRs` field for all HostSubnets belonging to the Machineset.
 
+Removing the annotation will make the field unmanaged. To explicitly REMOVE any `egressCIDRs`, set the annotation to the value `"none"`.
+
+    oc annotate machineset/foo appuio.ch/egress-cidrs=none
+
 ## Deployment
 
 When running the operator in-cluster, it will autodiscover the service account. When running out of cluster, make sure to set the `KUBECONFIG` env var.
@@ -36,4 +40,4 @@ Run `make deps` to fetch the latest dependencies. Upgrade the version Numbers on
 
 ## License
 
-BSD-3-Clause](LICENSE)
+[BSD-3-Clause](LICENSE)
