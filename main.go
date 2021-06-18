@@ -34,15 +34,8 @@ func main() {
 	config := newConfig()
 	ctrl := controller.New(config)
 
-	// set up infrastructure for stopping stuff
-	// stopCh will be passed to the controller to signal termination
-	stopCh := make(chan struct{})
-	defer close(stopCh)
-
-	// ctx will be passed to LeaderLock to signal termination
+	// ctx will be passed to lock and controller to signal termination
 	ctx, cancel := context.WithCancel(context.Background())
-	// defers are called in order, it's important that stopCh is closed before
-	// cancel is called since cancel will release the leaderlock.
 	defer cancel()
 
 	// Listen for OS signals
@@ -51,7 +44,7 @@ func main() {
 	go func() {
 		<-done
 		klog.Info("Exiting...")
-		os.Exit(0)
+		cancel()
 		// defer calls will be fired
 	}()
 
@@ -69,7 +62,6 @@ func main() {
 		},
 	}
 
-	//
 	leaderelection.RunOrDie(ctx, leaderelection.LeaderElectionConfig{
 		Name: "openshift-meco-leader",
 		Lock: lock,
@@ -84,12 +76,10 @@ func main() {
 		Callbacks: leaderelection.LeaderCallbacks{
 			OnStartedLeading: func(c context.Context) {
 				klog.Infof("Leader<%s>: got lease", leaseIdentity)
-				ctrl.Run(stopCh)
+				ctrl.Run(c)
 			},
 			OnStoppedLeading: func() {
 				klog.Infof("Leader<%s>: lost lease", leaseIdentity)
-				close(stopCh)
-				os.Exit(0)
 			},
 			OnNewLeader: func(identity string) {
 				if identity == leaseIdentity {
