@@ -98,7 +98,7 @@ func newConfig() *rest.Config {
 		klog.Infof("KUBECONFIG is set, using %s", kubeconfig)
 		config, err := clientcmd.BuildConfigFromFlags("", kubeconfig)
 		if err != nil {
-			klog.Fatal(err)
+			klog.Exit(err)
 		}
 		return config
 	}
@@ -106,7 +106,7 @@ func newConfig() *rest.Config {
 	klog.Info("using in-cluster config")
 	config, err := rest.InClusterConfig()
 	if err != nil {
-		klog.Fatal(err)
+		klog.Exit(err)
 	}
 
 	return config

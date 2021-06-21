@@ -1,6 +1,12 @@
 OCP_VERSION := 4.7
 K8S_VERSION := 1.20
 
+test:
+	go test -race ./...
+
+lint:
+	golangci-lint run -v ./...
+
 deps:
 	go get -d k8s.io/api@release-$(K8S_VERSION)
 	go get -d k8s.io/apimachinery@release-$(K8S_VERSION)
