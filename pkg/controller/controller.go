@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"context"
+
 	v1 "github.com/openshift/client-go/network/clientset/versioned/typed/network/v1"
 	network "github.com/openshift/client-go/network/informers/externalversions"
 	networkInformers "github.com/openshift/client-go/network/informers/externalversions/network/v1"
@@ -51,20 +53,18 @@ func New(config *rest.Config) *Controller {
 	return c
 }
 
-func (c *Controller) Run(stopCh <-chan struct{}) {
-	// TODO: acquire leader lock lease
-
+func (c *Controller) Run(ctx context.Context) {
 	// Doing the Machine(Set) sync first to ensure our CIDR cache is warmed up
-	c.machineInformerFactory.Start(stopCh)
-	if !cache.WaitForCacheSync(stopCh,
+	c.machineInformerFactory.Start(ctx.Done())
+	if !cache.WaitForCacheSync(ctx.Done(),
 		c.machineInformer.Informer().HasSynced,
 		c.machineSetInformer.Informer().HasSynced,
 	) {
 		klog.Fatal("Failed to do initial Machine sync")
 	}
 
-	c.networkInformerFactory.Start(stopCh)
-	if !cache.WaitForCacheSync(stopCh, c.hostSubNetInformer.Informer().HasSynced) {
+	c.networkInformerFactory.Start(ctx.Done())
+	if !cache.WaitForCacheSync(ctx.Done(), c.hostSubNetInformer.Informer().HasSynced) {
 		klog.Fatal("Failed to do initial Network sync")
 	}
 }
