@@ -26,6 +26,7 @@ You can configure logging verbosity by using the `-v` flag, however note that th
 
 Apply all the manifests in `manifests/` to your test cluster:
 
+    oc create namespace appuio-machineset-egress-cidr-operator
     kubectl apply -k ./manifests
 
 Fetch the kubeconfig file:

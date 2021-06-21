@@ -1,6 +1,8 @@
+---
+namespace: appuio-machineset-egress-cidr-operator
+
 commonLabels:
   app: openshift-machineset-egress-cidr-operator
 
 resources:
-  - namespace.yml
   - rbac.yml
