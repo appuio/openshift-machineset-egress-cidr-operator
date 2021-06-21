@@ -22,6 +22,7 @@ func TestCIDRMap(t *testing.T) {
 		{"one-space", "ggg, aaa", []v1.HostSubnetEgressCIDR{"aaa", "ggg"}},
 		{"multiple-spaces", "one,   two", []v1.HostSubnetEgressCIDR{"one", "two"}},
 		{"tabs", "tab,	ulator", []v1.HostSubnetEgressCIDR{"tab", "ulator"}},
+		{"none", "none", []v1.HostSubnetEgressCIDR{}},
 	} {
 		t.Run(c.Name, func(t *testing.T) {
 			is := is.New(t)
@@ -46,4 +47,13 @@ func TestCIDRMapEmptyString(t *testing.T) {
 
 	cm.Set("foo", "")
 	is.True(!cm.Exists("foo"))
+}
+
+func TestCIDRMapEqualCIDRs(t *testing.T) {
+	is := is.New(t)
+	cm := controller.NewCIDRMap()
+
+	cm.Set("foo", "none")
+	is.True(cm.EqualCIRDs("foo", []v1.HostSubnetEgressCIDR{}))
+	is.True(!cm.EqualCIRDs("foo", []v1.HostSubnetEgressCIDR{"none"}))
 }
