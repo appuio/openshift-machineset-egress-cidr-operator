@@ -1,0 +1,9 @@
+*.kubeconfig
+.git/
+.github/
+.vscode/
+manifests/
+.gitignore
+Makefile
+*.md
+Dockerfile

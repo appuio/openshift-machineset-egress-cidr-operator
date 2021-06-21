@@ -1,5 +1,7 @@
 # OpenShift MachineSet EgressCIDR operator
 
+[![Docker Repository on Quay](https://quay.io/repository/appuio/openshift-machineset-egress-cidr-operator/status "Docker Repository on Quay")](https://quay.io/repository/appuio/openshift-machineset-egress-cidr-operator)
+
 Automatically configure `egressCIDRs` for all nodes belonging to a MachineSet.
 
 ## Usage
